@@ -4,10 +4,13 @@ import { AppService } from './app.service';
 import { CustomerController } from './controller/customer-controller';
 import { CustomerService } from './service/customer-service';
 import { CustomerRepository } from './repository/customer-repository';
+import { PeerApptController } from './controller/peer-appt-controller';
+import { PeerApptService } from './service/peer-appt-service';
+import { PeerApptRepository } from './repository/peer-appt-repository';
 
 @Module({ 
   imports: [],
-  controllers: [AppController, CustomerController],
-  providers: [AppService, CustomerService, CustomerRepository],
+  controllers: [AppController, CustomerController, PeerApptController],
+  providers: [AppService, CustomerService, CustomerRepository, PeerApptService, PeerApptRepository],
 })
 export class AppModule {}

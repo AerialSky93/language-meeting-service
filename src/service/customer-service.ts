@@ -1,10 +1,10 @@
 import { CustomerRepository } from "../repository/customer-repository";
-import type { CustomerGetRequest } from "../dto/customer-get-request";
-import type { CustomerGetResponse } from "../dto/customer-get-response";
-import type { CustomerCreateRequest } from "../dto/customer-create-request";
-import type { CustomerCreateResponse } from "../dto/customer-create-response";
-import type { CustomerUpdateRequest } from "../dto/customer-update-request";
-import type { CustomerUpdateResponse } from "../dto/customer-update-response";
+import type { CustomerGetRequest } from "../dto/customer-dto/customer-get-request";
+import type { CustomerGetResponse } from "../dto/customer-dto/customer-get-response";
+import type { CustomerCreateRequest } from "../dto/customer-dto/customer-create-request";
+import type { CustomerCreateResponse } from "../dto/customer-dto/customer-create-response";
+import type { CustomerUpdateRequest } from "../dto/customer-dto/customer-update-request";
+import type { CustomerUpdateResponse } from "../dto/customer-dto/customer-update-response";
 import { Injectable } from "@nestjs/common";
 
 @Injectable()

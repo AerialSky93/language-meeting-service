@@ -1,12 +1,12 @@
 import { Controller, Get, Post, Put, Body, Param, HttpException, HttpStatus } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
 import { CustomerService } from "../service/customer-service";
-import { CustomerGetRequest } from "../dto/customer-get-request";
-import { CustomerCreateRequest } from "../dto/customer-create-request";
-import { CustomerUpdateRequest } from "../dto/customer-update-request";
-import { CustomerCreateResponse } from "../dto/customer-create-response";
-import { CustomerGetResponse } from "../dto/customer-get-response";
-import { CustomerUpdateResponse } from "../dto/customer-update-response";
+import { CustomerGetRequest } from "../dto/customer-dto/customer-get-request";
+import { CustomerCreateRequest } from "../dto/customer-dto/customer-create-request";
+import { CustomerUpdateRequest } from "../dto/customer-dto/customer-update-request";
+import { CustomerCreateResponse } from "../dto/customer-dto/customer-create-response";
+import { CustomerGetResponse } from "../dto/customer-dto/customer-get-response";
+import { CustomerUpdateResponse } from "../dto/customer-dto/customer-update-response";
 
 @Controller()
 export class CustomerController {
