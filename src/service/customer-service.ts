@@ -40,7 +40,7 @@ export class CustomerService {
     customerId: number,
     request: CustomerUpdateRequest
   ): Promise<CustomerUpdateResponse> {
-    if (!request.first_name && !request.last_name && !request.email) {
+    if (!request.first_name && !request.last_name && !request.email && !request.time_zone) {
       throw new Error("At least one field must be provided for update");
     }
 

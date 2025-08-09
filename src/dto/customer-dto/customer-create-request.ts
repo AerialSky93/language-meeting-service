@@ -12,4 +12,8 @@ export class CustomerCreateRequest {
   @IsEmail({}, { message: 'Invalid email format' })
   @IsNotEmpty({ message: 'Email is required' })
   email: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Time zone is required' })
+  time_zone: string;
 }

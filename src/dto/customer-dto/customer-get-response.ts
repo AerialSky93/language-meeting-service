@@ -3,4 +3,5 @@ export interface CustomerGetResponse {
   first_name: string;
   last_name: string;
   email: string;
+  time_zone: string;
 }

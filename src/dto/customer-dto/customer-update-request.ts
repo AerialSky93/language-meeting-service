@@ -9,4 +9,7 @@ export class CustomerUpdateRequest {
 
   @IsEmail({}, { message: 'Invalid email format' })
   email?: string;
+
+  @IsString()
+  time_zone?: string;
 }

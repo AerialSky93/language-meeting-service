@@ -12,10 +12,10 @@ export class CustomerRepository {
   async createCustomer(
     req: CustomerCreateRequest
   ): Promise<CustomerCreateResponse> {
-    const values = [req.first_name, req.last_name, req.email];
+    const values = [req.first_name, req.last_name, req.email, req.time_zone];
     const query = `
-            INSERT INTO customer (first_name, last_name, email)
-            VALUES ($1, $2, $3)
+            INSERT INTO customer (first_name, last_name, email, time_zone)
+            VALUES ($1, $2, $3, $4)
             RETURNING customer_id;
         `;
 
@@ -29,7 +29,7 @@ export class CustomerRepository {
     customerId,
   }: CustomerGetRequest): Promise<CustomerGetResponse | null> {
     const query = `
-          SELECT customer_id, first_name, last_name, email
+          SELECT customer_id, first_name, last_name, email, time_zone
           FROM customer
           WHERE customer_id = $1;
         `;
@@ -45,11 +45,12 @@ export class CustomerRepository {
           UPDATE customer 
           SET first_name = COALESCE($1, first_name),
               last_name = COALESCE($2, last_name),
-              email = COALESCE($3, email)
-          WHERE customer_id = $4
+              email = COALESCE($3, email),
+              time_zone = COALESCE($4, time_zone)
+          WHERE customer_id = $5
           RETURNING customer_id;
         `;
-    const values = [req.first_name, req.last_name, req.email, customerId];
+    const values = [req.first_name, req.last_name, req.email, req.time_zone, customerId];
     const { rows } = await pool.query(query, values);
 
     return rows.length ? { message: "Customer updated successfully" } : null;
