@@ -10,6 +10,9 @@ export class PeerApptUpdateRequest {
   @IsNumber()
   language_global_id?: number;
 
+  @IsUUID()
+  customer_id_requestor?: string;
+
   @IsString()
   peer_appt_description?: string;
 

@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsNumber, IsOptional, IsIn, IsInt, Min, Max, IsDateString } from 'class-validator';
+import { IsString, IsNotEmpty, IsNumber, IsOptional, IsIn, IsInt, Min, Max, IsDateString, IsUUID } from 'class-validator';
 
 export class PeerApptCreateRequest {
   @IsString()
@@ -8,6 +8,10 @@ export class PeerApptCreateRequest {
   @IsNumber()
   @IsNotEmpty({ message: 'Language global ID is required' })
   language_global_id: number;
+
+  @IsUUID()
+  @IsNotEmpty({ message: 'Customer ID requestor is required' })
+  customer_id_requestor: string;
 
   @IsString()
   @IsOptional()
