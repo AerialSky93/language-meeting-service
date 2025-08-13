@@ -7,6 +7,7 @@ import {
   VoiceChannel,
 } from 'discord.js';
 import { discordConfig } from '../config/discord.config';
+import { DISCORD_CHANNELS } from '../const/discord-channel-names';
 
 @Injectable()
 export class DiscordService implements OnModuleInit {
@@ -17,7 +18,6 @@ export class DiscordService implements OnModuleInit {
     this.client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
     this.client.once('ready', async () => {
-      const channelName = 'test2';
       this.logger.log(`Logged in as ${this.client.user?.tag}!`);
       const guild: Guild | undefined = this.client.guilds.cache.get(
         discordConfig.guildId,
@@ -28,32 +28,43 @@ export class DiscordService implements OnModuleInit {
         return;
       }
 
-      const existingChannel = guild.channels.cache.find(
-        (channel) =>
-          channel.name === channelName &&
-          channel.type === ChannelType.GuildVoice,
-      ) as VoiceChannel | undefined;
-
-      if (existingChannel) {
-        this.logger.log(
-          `Channel '${channelName}' already exists with ID: ${existingChannel.id}`,
-        );
-        return;
-      } else {
-        try {
-          const channel: VoiceChannel = (await guild.channels.create({
-            name: channelName,
-            type: ChannelType.GuildVoice,
-            reason: 'Needed a new voice channel',
-          })) as VoiceChannel;
-          this.logger.log(
-            `Created channel ${channel.name} with ID: ${channel.id}`,
-          );
-        } catch (error) {
-          this.logger.error('Error creating channel:', error);
-        }
-      }
+      // Create all channels in a loop
+      await this.createAllChannels(guild);
     });
     await this.client.login(discordConfig.clientToken);
+  }
+
+  private async createAllChannels(guild: Guild) {
+    this.logger.log('Starting to create Discord channels...');
+    for (const channelConfig of DISCORD_CHANNELS) {
+      await this.createChannel(guild, channelConfig.discordChannelName);
+    }
+    this.logger.log('Finished creating Discord channels.');
+  }
+
+  private async createChannel(guild: Guild, channelName: string) {
+    const existingChannel = guild.channels.cache.find(
+      (channel) =>
+        channel.name === channelName && channel.type === ChannelType.GuildVoice,
+    ) as VoiceChannel | undefined;
+
+    if (existingChannel) {
+      this.logger.log(
+        `Channel '${channelName}' already exists with ID: ${existingChannel.id}`,
+      );
+      return;
+    }
+
+    try {
+      const channel: VoiceChannel = (await guild.channels.create({
+        name: channelName,
+        type: ChannelType.GuildVoice,
+        reason: `Creating voice channel for ${channelName}`,
+      })) as VoiceChannel;
+
+      this.logger.log(`Created channel ${channel.name} with ID: ${channel.id}`);
+    } catch (error) {
+      this.logger.error(`Error creating channel '${channelName}':`, error);
+    }
   }
 }
