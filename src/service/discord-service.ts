@@ -58,9 +58,10 @@ export class DiscordService implements OnModuleInit {
 
   public async createAllChannels(): Promise<void> {
     this.logger.log('Starting to create Discord channels...');
-    for (const channelConfig of DISCORD_CHANNELS) {
-      await this.createChannel(channelConfig.discordChannelName);
-    }
+    const createChannelPromises = DISCORD_CHANNELS.map((channelConfig) =>
+      this.createChannel(channelConfig.discordChannelName),
+    );
+    await Promise.all(createChannelPromises);
     this.logger.log('Finished creating Discord channels.');
   }
 
@@ -73,22 +74,25 @@ export class DiscordService implements OnModuleInit {
         this.logger.warn(`No voice channels found with name '${channelName}'`);
         return;
       }
-      for (const channel of channels.values()) {
-        try {
-          const voiceChannel = channel as VoiceChannel;
-          await voiceChannel.delete(
-            `Deleting all channels with name ${channelName}`,
-          );
-          this.logger.log(
-            `Deleted channel '${channelName}' with ID: ${voiceChannel.id}`,
-          );
-        } catch (error) {
-          this.logger.error(
-            `Error deleting channel '${channelName}' with ID ${channel.id}:`,
-            error,
-          );
-        }
-      }
+      const deleteChannelPromises = Array.from(channels.values()).map(
+        async (channel) => {
+          try {
+            const voiceChannel = channel as VoiceChannel;
+            await voiceChannel.delete(
+              `Deleting all channels with name ${channelName}`,
+            );
+            this.logger.log(
+              `Deleted channel '${channelName}' with ID: ${voiceChannel.id}`,
+            );
+          } catch (error) {
+            this.logger.error(
+              `Error deleting channel '${channelName}' with ID ${channel.id}:`,
+              error,
+            );
+          }
+        },
+      );
+      await Promise.all(deleteChannelPromises);
       await this.createChannel(channelName);
     } catch (error) {
       this.logger.error(
@@ -99,9 +103,10 @@ export class DiscordService implements OnModuleInit {
   }
 
   public async recreateAllChannels(): Promise<void> {
-    for (const channelConfig of DISCORD_CHANNELS) {
-      await this.recreateChannelName(channelConfig.discordChannelName);
-    }
+    const recreateChannelPromises = DISCORD_CHANNELS.map((channelConfig) =>
+      this.recreateChannelName(channelConfig.discordChannelName),
+    );
+    await Promise.all(recreateChannelPromises);
     this.logger.log('Finished creating Discord channels.');
   }
 
@@ -114,22 +119,25 @@ export class DiscordService implements OnModuleInit {
         this.logger.warn(`No voice channels found with name '${channelName}'`);
         return;
       }
-      for (const channel of channels.values()) {
-        try {
-          const voiceChannel = channel as VoiceChannel;
-          await voiceChannel.delete(
-            `Deleting all channels with name ${channelName}`,
-          );
-          this.logger.log(
-            `Deleted channel '${channelName}' with ID: ${voiceChannel.id}`,
-          );
-        } catch (error) {
-          this.logger.error(
-            `Error deleting channel '${channelName}' with ID ${channel.id}:`,
-            error,
-          );
-        }
-      }
+      const deleteChannelPromises = Array.from(channels.values()).map(
+        async (channel) => {
+          try {
+            const voiceChannel = channel as VoiceChannel;
+            await voiceChannel.delete(
+              `Deleting all channels with name ${channelName}`,
+            );
+            this.logger.log(
+              `Deleted channel '${channelName}' with ID: ${voiceChannel.id}`,
+            );
+          } catch (error) {
+            this.logger.error(
+              `Error deleting channel '${channelName}' with ID ${channel.id}:`,
+              error,
+            );
+          }
+        },
+      );
+      await Promise.all(deleteChannelPromises);
     } catch (error) {
       this.logger.error(
         `Error deleting channels with name '${channelName}':`,
@@ -138,9 +146,10 @@ export class DiscordService implements OnModuleInit {
     }
   }
   public async deleteAllChannelNames(): Promise<void> {
-    for (const channelConfig of DISCORD_CHANNELS) {
-      await this.deleteChannelName(channelConfig.discordChannelName);
-    }
+    const deleteChannelPromises = DISCORD_CHANNELS.map((channelConfig) =>
+      this.deleteChannelName(channelConfig.discordChannelName),
+    );
+    await Promise.all(deleteChannelPromises);
     this.logger.log('Finished deleting Discord channels.');
   }
 }
