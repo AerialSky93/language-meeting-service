@@ -13,24 +13,27 @@ import { DISCORD_CHANNELS } from '../const/discord-channel-names';
 export class DiscordService implements OnModuleInit {
   private readonly logger = new Logger(DiscordService.name);
   private client: Client;
-  private guild: Guild | undefined;
+  private guild: Guild;
 
   async onModuleInit() {
     this.client = new Client({ intents: [GatewayIntentBits.Guilds] });
     this.client.once('ready', async () => {
       this.logger.log(`Logged in as ${this.client.user?.tag}!`);
-      this.guild = this.client.guilds.cache.get(discordConfig.guildId);
-      if (!this.guild) {
+      const guidValue = this.client.guilds.cache.get(discordConfig.guildId);
+      if (!guidValue) {
         this.logger.warn('Bot is not in this channel guild!');
         return;
+      } else {
+        this.guild = guidValue;
       }
+      await this.deleteAllChannelNames();
       await this.recreateAllChannels();
     });
     await this.client.login(discordConfig.clientToken);
   }
 
-  private async createChannel(guild: Guild, channelName: string) {
-    const existingChannel = guild.channels.cache.find(
+  private async createChannel(channelName: string): Promise<void> {
+    const existingChannel = this.guild.channels.cache.find(
       (channel) => channel.name === channelName,
     ) as VoiceChannel | undefined;
 
@@ -41,7 +44,7 @@ export class DiscordService implements OnModuleInit {
       return;
     }
     try {
-      const channel: VoiceChannel = (await guild.channels.create({
+      const channel: VoiceChannel = (await this.guild.channels.create({
         name: channelName,
         type: ChannelType.GuildVoice,
         reason: `Creating voice channel for ${channelName}`,
@@ -53,30 +56,23 @@ export class DiscordService implements OnModuleInit {
     }
   }
 
-  public async createAllChannels(guild: Guild) {
+  public async createAllChannels(): Promise<void> {
     this.logger.log('Starting to create Discord channels...');
     for (const channelConfig of DISCORD_CHANNELS) {
-      await this.createChannel(guild, channelConfig.discordChannelName);
+      await this.createChannel(channelConfig.discordChannelName);
     }
     this.logger.log('Finished creating Discord channels.');
   }
 
-  public async recreateChannelName(channelName: string): Promise<number> {
+  public async recreateChannelName(channelName: string): Promise<void> {
     try {
-      if (!this.guild) {
-        this.logger.warn('Bot is not in the channel guild');
-        return 0;
-      }
       const channels = this.guild.channels.cache.filter(
         (ch) => ch.name === channelName,
       );
-
       if (channels == null || channels.size === 0) {
         this.logger.warn(`No voice channels found with name '${channelName}'`);
-        return 0;
+        return;
       }
-
-      let deletedCount = 0;
       for (const channel of channels.values()) {
         try {
           const voiceChannel = channel as VoiceChannel;
@@ -86,7 +82,6 @@ export class DiscordService implements OnModuleInit {
           this.logger.log(
             `Deleted channel '${channelName}' with ID: ${voiceChannel.id}`,
           );
-          deletedCount++;
         } catch (error) {
           this.logger.error(
             `Error deleting channel '${channelName}' with ID ${channel.id}:`,
@@ -94,24 +89,58 @@ export class DiscordService implements OnModuleInit {
           );
         }
       }
-      this.logger.log(
-        `Successfully deleted ${deletedCount} channels with name '${channelName}'`,
-      );
-      await this.createChannel(this.guild, channelName);
-      return deletedCount;
+      await this.createChannel(channelName);
     } catch (error) {
       this.logger.error(
         `Error deleting channels with name '${channelName}':`,
         error,
       );
-      return 0;
     }
   }
 
-  public async recreateAllChannels() {
+  public async recreateAllChannels(): Promise<void> {
     for (const channelConfig of DISCORD_CHANNELS) {
       await this.recreateChannelName(channelConfig.discordChannelName);
     }
     this.logger.log('Finished creating Discord channels.');
+  }
+
+  public async deleteChannelName(channelName: string): Promise<void> {
+    try {
+      const channels = this.guild.channels.cache.filter(
+        (ch) => ch.name === channelName,
+      );
+      if (channels == null || channels.size === 0) {
+        this.logger.warn(`No voice channels found with name '${channelName}'`);
+        return;
+      }
+      for (const channel of channels.values()) {
+        try {
+          const voiceChannel = channel as VoiceChannel;
+          await voiceChannel.delete(
+            `Deleting all channels with name ${channelName}`,
+          );
+          this.logger.log(
+            `Deleted channel '${channelName}' with ID: ${voiceChannel.id}`,
+          );
+        } catch (error) {
+          this.logger.error(
+            `Error deleting channel '${channelName}' with ID ${channel.id}:`,
+            error,
+          );
+        }
+      }
+    } catch (error) {
+      this.logger.error(
+        `Error deleting channels with name '${channelName}':`,
+        error,
+      );
+    }
+  }
+  public async deleteAllChannelNames(): Promise<void> {
+    for (const channelConfig of DISCORD_CHANNELS) {
+      await this.deleteChannelName(channelConfig.discordChannelName);
+    }
+    this.logger.log('Finished deleting Discord channels.');
   }
 }
