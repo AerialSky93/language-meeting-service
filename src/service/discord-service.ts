@@ -26,8 +26,7 @@ export class DiscordService implements OnModuleInit {
       } else {
         this.guild = guidValue;
       }
-      await this.deleteAllChannelNames();
-      await this.recreateAllChannels();
+      await this.createAllChannels();
     });
     await this.client.login(discordConfig.clientToken);
   }
@@ -59,7 +58,7 @@ export class DiscordService implements OnModuleInit {
   public async createAllChannels(): Promise<void> {
     this.logger.log('Starting to create Discord channels...');
     const createChannelPromises = DISCORD_CHANNELS.map((channelConfig) =>
-      this.createChannel(channelConfig.discordChannelName),
+      this.createChannel(channelConfig.discordChannelName + '-Korean'),
     );
     await Promise.all(createChannelPromises);
     this.logger.log('Finished creating Discord channels.');
