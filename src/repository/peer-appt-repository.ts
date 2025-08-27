@@ -1,4 +1,4 @@
-import pool from "../config/database";
+import pool from '../config/database';
 import type {
   PeerApptGetRequest,
   PeerApptGetResponse,
@@ -6,16 +6,16 @@ import type {
   PeerApptCreateResponse,
   PeerApptUpdateRequest,
   PeerApptUpdateResponse,
-} from "../dto";
+} from '../dto';
 
 export class PeerApptRepository {
   async createPeerAppt(
-    req: PeerApptCreateRequest
+    req: PeerApptCreateRequest,
   ): Promise<PeerApptCreateResponse> {
     const values = [
       req.topic,
       req.language_global_id,
-      req.customer_id_requestor,
+      req.user_id_requestor,
       req.peer_appt_description,
       req.peer_appt_minute_duration,
       req.peer_appt_start_datetime,
@@ -26,7 +26,7 @@ export class PeerApptRepository {
       INSERT INTO peer_appt (
         topic, 
         language_global_id, 
-        customer_id_requestor,
+        user_id_requestor,
         peer_appt_description, 
         peer_appt_minute_duration, 
         peer_appt_start_datetime, 
@@ -51,7 +51,7 @@ export class PeerApptRepository {
         peer_appt_id,
         topic,
         language_global_id,
-        customer_id_requestor,
+        user_id_requestor,
         peer_appt_description,
         peer_appt_minute_duration,
         peer_appt_start_datetime,
@@ -66,14 +66,14 @@ export class PeerApptRepository {
   }
 
   async updatePeerAppt(
-    req: PeerApptUpdateRequest
+    req: PeerApptUpdateRequest,
   ): Promise<PeerApptUpdateResponse | null> {
     const query = `
       UPDATE peer_appt 
       SET 
         topic = $1,
         language_global_id = $2,
-        customer_id_requestor = $3,
+        user_id_requestor = $3,
         peer_appt_description = $4,
         peer_appt_minute_duration = $5,
         peer_appt_start_datetime = $6,
@@ -82,11 +82,11 @@ export class PeerApptRepository {
       WHERE peer_appt_id = $9
       RETURNING peer_appt_id;
     `;
-    
+
     const values = [
       req.topic,
       req.language_global_id,
-      req.customer_id_requestor,
+      req.user_id_requestor,
       req.peer_appt_description,
       req.peer_appt_minute_duration,
       req.peer_appt_start_datetime,
@@ -94,8 +94,10 @@ export class PeerApptRepository {
       req.peer_appt_location,
       req.peer_appt_id,
     ];
-    
+
     const { rows } = await pool.query(query, values);
-    return rows.length ? { message: "Peer appointment updated successfully" } : null;
+    return rows.length
+      ? { message: 'Peer appointment updated successfully' }
+      : null;
   }
 }

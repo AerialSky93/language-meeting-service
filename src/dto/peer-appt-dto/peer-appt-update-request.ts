@@ -1,4 +1,14 @@
-import { IsString, IsOptional, IsNumber, IsIn, IsInt, Min, Max, IsDateString, IsUUID } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsNumber,
+  IsIn,
+  IsInt,
+  Min,
+  Max,
+  IsDateString,
+  IsUUID,
+} from 'class-validator';
 
 export class PeerApptUpdateRequest {
   @IsUUID()
@@ -11,13 +21,15 @@ export class PeerApptUpdateRequest {
   language_global_id?: number;
 
   @IsUUID()
-  customer_id_requestor?: string;
+  user_id_requestor?: string;
 
   @IsString()
   peer_appt_description?: string;
 
   @IsInt()
-  @IsIn([15, 30, 45, 60], { message: 'Duration must be 15, 30, 45, or 60 minutes' })
+  @IsIn([15, 30, 45, 60], {
+    message: 'Duration must be 15, 30, 45, or 60 minutes',
+  })
   peer_appt_minute_duration?: number;
 
   @IsDateString()

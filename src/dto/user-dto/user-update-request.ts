@@ -1,6 +1,6 @@
 import { IsString, IsEmail, IsOptional } from 'class-validator';
 
-export class CustomerUpdateRequest {
+export class UserUpdateRequest {
   @IsString()
   first_name?: string;
 

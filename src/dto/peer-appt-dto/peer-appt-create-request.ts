@@ -21,8 +21,8 @@ export class PeerApptCreateRequest {
   language_global_id: number;
 
   @IsUUID()
-  @IsNotEmpty({ message: 'Customer ID requestor is required' })
-  customer_id_requestor: string;
+  @IsNotEmpty({ message: 'User ID requestor is required' })
+  user_id_requestor: string;
 
   @IsString()
   @IsOptional()

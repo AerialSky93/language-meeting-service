@@ -1,4 +1,4 @@
-const User = require('../models/index')['User'];
+const User = require('../service-auth/user');
 
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
@@ -18,7 +18,7 @@ module.exports = function (passport) {
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         callbackURL: process.env.GOOGLE_APP_CALLBACK_URL,
       },
-      async function (accessToken, refreshToken, profile, cb) {
+      async function (accessToken, refreshToken, profile, done) {
         const [user, status] = await User.findOrCreate({
           where: {
             social_user_id: profile.id,
@@ -26,7 +26,7 @@ module.exports = function (passport) {
             registration_type: 'google',
           },
         });
-        cb(null, user);
+        done(null, user);
       },
     ),
   );

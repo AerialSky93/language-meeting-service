@@ -1,6 +1,6 @@
 import { IsString, IsEmail, IsNotEmpty } from 'class-validator';
 
-export class CustomerCreateRequest {
+export class UserCreateRequest {
   @IsString()
   @IsNotEmpty({ message: 'First name is required' })
   first_name: string;
