@@ -8,10 +8,16 @@ import { PeerApptController } from './controller/peer-appt-controller';
 import { PeerApptService } from './service/peer-appt-service';
 import { PeerApptRepository } from './repository/peer-appt-repository';
 import { DiscordService } from './service/discord-service';
+import { AuthController } from './service-auth/auth-controller-google';
 
 @Module({
   imports: [],
-  controllers: [AppController, UserAccountController, PeerApptController],
+  controllers: [
+    AppController,
+    UserAccountController,
+    PeerApptController,
+    AuthController,
+  ],
   providers: [
     AppService,
     UserAccountService,
