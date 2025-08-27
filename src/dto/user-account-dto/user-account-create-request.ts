@@ -2,12 +2,8 @@ import { IsString, IsEmail, IsNotEmpty } from 'class-validator';
 
 export class UserAccountCreateRequest {
   @IsString()
-  @IsNotEmpty({ message: 'First name is required' })
-  first_name: string;
-
-  @IsString()
-  @IsNotEmpty({ message: 'Last name is required' })
-  last_name: string;
+  @IsNotEmpty({ message: 'Full name is required' })
+  full_name: string;
 
   @IsEmail({}, { message: 'Invalid email format' })
   @IsNotEmpty({ message: 'Email is required' })

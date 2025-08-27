@@ -15,7 +15,9 @@ export class UserAccountService {
     userAccountData: UserAccountCreateRequest,
   ): Promise<UserAccountCreateResponse> {
     try {
-      return await this.userAccountRepository.createUserAccount(userAccountData);
+      return await this.userAccountRepository.createUserAccount(
+        userAccountData,
+      );
     } catch (error) {
       throw new Error(
         `Failed to create user account: ${
@@ -28,7 +30,8 @@ export class UserAccountService {
   async getUserAccountById(
     request: UserAccountGetRequest,
   ): Promise<UserAccountGetResponse> {
-    const userAccount = await this.userAccountRepository.getUserAccountById(request);
+    const userAccount =
+      await this.userAccountRepository.getUserAccountById(request);
     if (!userAccount) {
       throw new Error('User account not found');
     }
@@ -40,12 +43,7 @@ export class UserAccountService {
     userId: number,
     request: UserAccountUpdateRequest,
   ): Promise<UserAccountUpdateResponse> {
-    if (
-      !request.first_name &&
-      !request.last_name &&
-      !request.email &&
-      !request.time_zone
-    ) {
+    if (!request.full_name && !request.email && !request.time_zone) {
       throw new Error('At least one field must be provided for update');
     }
 
@@ -64,14 +62,14 @@ export class UserAccountService {
     socialUserId: string,
     name: string,
     registrationType: 'google' | 'facebook' | 'email',
-    email?: string
+    email?: string,
   ): Promise<UserAccountGetResponse> {
     try {
       return await this.userAccountRepository.getOrCreateUserAccount(
         socialUserId,
         name,
         registrationType,
-        email
+        email,
       );
     } catch (error) {
       throw new Error(
