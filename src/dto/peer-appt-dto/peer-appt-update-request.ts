@@ -21,7 +21,7 @@ export class PeerApptUpdateRequest {
   language_global_id?: number;
 
   @IsUUID()
-  user_id_requestor?: string;
+  user_account_id_requestor?: string;
 
   @IsString()
   peer_appt_description?: string;

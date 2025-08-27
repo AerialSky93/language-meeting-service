@@ -1,5 +1,5 @@
-export interface UserGetResponse {
-  user_id: number;
+export interface UserAccountGetResponse {
+  user_account_id: number;
   first_name: string;
   last_name: string;
   email: string;

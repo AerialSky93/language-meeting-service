@@ -26,7 +26,7 @@ export class DiscordService implements OnModuleInit {
       } else {
         this.guild = guidValue;
       }
-      await this.createAllChannels();
+      await true; //this.createAllChannels();
     });
     await this.client.login(discordConfig.clientToken);
   }

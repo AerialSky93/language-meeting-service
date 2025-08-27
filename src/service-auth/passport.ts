@@ -21,7 +21,7 @@ module.exports = function (passport) {
       async function (accessToken, refreshToken, profile, done) {
         const [user, status] = await User.findOrCreate({
           where: {
-            social_user_id: profile.id,
+            social_user_account_id: profile.id,
             name: profile.displayName,
             registration_type: 'google',
           },

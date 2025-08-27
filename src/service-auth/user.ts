@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
       name: DataTypes.STRING(45),
       email: DataTypes.STRING(100),
       registration_type: DataTypes.ENUM('email', 'google', 'facebook'),
-      social_user_id: DataTypes.STRING(30),
+      social_user_account_id: DataTypes.STRING(30),
       password: DataTypes.STRING(80),
     },
     {

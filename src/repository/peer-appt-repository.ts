@@ -15,7 +15,7 @@ export class PeerApptRepository {
     const values = [
       req.topic,
       req.language_global_id,
-      req.user_id_requestor,
+      req.user_account_id_requestor,
       req.peer_appt_description,
       req.peer_appt_minute_duration,
       req.peer_appt_start_datetime,
@@ -26,7 +26,7 @@ export class PeerApptRepository {
       INSERT INTO peer_appt (
         topic, 
         language_global_id, 
-        user_id_requestor,
+        user_account_id_requestor,
         peer_appt_description, 
         peer_appt_minute_duration, 
         peer_appt_start_datetime, 
@@ -51,7 +51,7 @@ export class PeerApptRepository {
         peer_appt_id,
         topic,
         language_global_id,
-        user_id_requestor,
+        user_account_id_requestor,
         peer_appt_description,
         peer_appt_minute_duration,
         peer_appt_start_datetime,
@@ -73,7 +73,7 @@ export class PeerApptRepository {
       SET 
         topic = $1,
         language_global_id = $2,
-        user_id_requestor = $3,
+        user_account_id_requestor = $3,
         peer_appt_description = $4,
         peer_appt_minute_duration = $5,
         peer_appt_start_datetime = $6,
@@ -86,7 +86,7 @@ export class PeerApptRepository {
     const values = [
       req.topic,
       req.language_global_id,
-      req.user_id_requestor,
+      req.user_account_id_requestor,
       req.peer_appt_description,
       req.peer_appt_minute_duration,
       req.peer_appt_start_datetime,
