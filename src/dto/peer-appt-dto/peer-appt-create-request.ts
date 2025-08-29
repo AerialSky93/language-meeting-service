@@ -22,7 +22,7 @@ export class PeerApptCreateRequest {
 
   @IsUUID()
   @IsNotEmpty({ message: 'User ID requestor is required' })
-  user_account_id_requestor: string;
+  user_account_requestor_id: string;
 
   @IsString()
   @IsOptional()
