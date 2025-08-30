@@ -49,18 +49,22 @@ export class PeerApptRepository {
   }: PeerApptGetRequest): Promise<PeerApptGetResponse | null> {
     const query = `
       SELECT 
-        peer_appt_id,
-        conversation_topic_id,
-        language_global_id,
-        user_account_requestor_id,
-        peer_appt_description,
-        peer_appt_minute_duration,
-        peer_appt_start_datetime,
-        peer_appt_end_datetime,
-        peer_appt_max_people,
-        peer_appt_location
-      FROM peer_appt
-      WHERE peer_appt_id = $1;
+        pa.peer_appt_id,
+        pa.conversation_topic_id,
+        ct.conversation_topic_name,
+        pa.language_global_id,
+        lg.language_name,
+        pa.user_account_requestor_id,
+        pa.peer_appt_description,
+        pa.peer_appt_minute_duration,
+        pa.peer_appt_start_datetime,
+        pa.peer_appt_end_datetime,
+        pa.peer_appt_max_people,
+        pa.peer_appt_location
+      FROM peer_appt pa
+      LEFT JOIN conversation_topic ct ON pa.conversation_topic_id = ct.conversation_topic_id
+      LEFT JOIN language_global lg ON pa.language_global_id = lg.language_global_id
+      WHERE pa.peer_appt_id = $1;
     `;
     const { rows } = await pool.query(query, [peer_appt_id]);
     return rows[0] || null;
@@ -107,19 +111,23 @@ export class PeerApptRepository {
   ): Promise<PeerApptGetResponse[]> {
     const query = `
       SELECT 
-        peer_appt_id,
-        conversation_topic_id,
-        language_global_id,
-        user_account_requestor_id,
-        peer_appt_description,
-        peer_appt_minute_duration,
-        peer_appt_start_datetime,
-        peer_appt_end_datetime,
-        peer_appt_max_people,
-        peer_appt_location
-      FROM peer_appt
-      WHERE conversation_topic_id = $1 AND language_global_id = $2
-      ORDER BY peer_appt_start_datetime ASC;
+        pa.peer_appt_id,
+        pa.conversation_topic_id,
+        ct.conversation_topic_name,
+        pa.language_global_id,
+        lg.language_name,
+        pa.user_account_requestor_id,
+        pa.peer_appt_description,
+        pa.peer_appt_minute_duration,
+        pa.peer_appt_start_datetime,
+        pa.peer_appt_end_datetime,
+        pa.peer_appt_max_people,
+        pa.peer_appt_location
+      FROM peer_appt pa
+      LEFT JOIN conversation_topic ct ON pa.conversation_topic_id = ct.conversation_topic_id
+      LEFT JOIN language_global lg ON pa.language_global_id = lg.language_global_id
+      WHERE pa.conversation_topic_id = $1 AND pa.language_global_id = $2
+      ORDER BY pa.peer_appt_start_datetime ASC;
     `;
     const { rows } = await pool.query(query, [
       req.conversation_topic_id,
