@@ -14,8 +14,10 @@ export class PeerApptUpdateRequest {
   @IsUUID()
   peer_appt_id?: string;
 
-  @IsString()
-  topic?: string;
+  @IsNumber()
+  @IsInt()
+  @IsOptional()
+  conversation_topic_id?: number;
 
   @IsNumber()
   language_global_id?: number;

@@ -12,9 +12,10 @@ import {
 } from 'class-validator';
 
 export class PeerApptCreateRequest {
-  @IsString()
-  @IsNotEmpty({ message: 'Topic is required' })
-  topic: string;
+  @IsNumber()
+  @IsInt()
+  @IsNotEmpty({ message: 'Conversation topic ID is required' })
+  conversation_topic_id: number;
 
   @IsNumber()
   @IsNotEmpty({ message: 'Language global ID is required' })

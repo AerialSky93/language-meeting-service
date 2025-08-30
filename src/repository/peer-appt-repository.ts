@@ -13,7 +13,7 @@ export class PeerApptRepository {
     req: PeerApptCreateRequest,
   ): Promise<PeerApptCreateResponse> {
     const values = [
-      req.topic,
+      req.conversation_topic_id,
       req.language_global_id,
       req.user_account_requestor_id,
       req.peer_appt_description,
@@ -24,7 +24,7 @@ export class PeerApptRepository {
     ];
     const query = `
       INSERT INTO peer_appt (
-        topic, 
+        conversation_topic_id, 
         language_global_id, 
         user_account_requestor_id,
         peer_appt_description, 
@@ -49,7 +49,7 @@ export class PeerApptRepository {
     const query = `
       SELECT 
         peer_appt_id,
-        topic,
+        conversation_topic_id,
         language_global_id,
         user_account_requestor_id,
         peer_appt_description,
@@ -71,7 +71,7 @@ export class PeerApptRepository {
     const query = `
       UPDATE peer_appt 
       SET 
-        topic = $1,
+        conversation_topic_id = $1,
         language_global_id = $2,
         user_account_requestor_id = $3,
         peer_appt_description = $4,
@@ -84,7 +84,7 @@ export class PeerApptRepository {
     `;
 
     const values = [
-      req.topic,
+      req.conversation_topic_id,
       req.language_global_id,
       req.user_account_requestor_id,
       req.peer_appt_description,

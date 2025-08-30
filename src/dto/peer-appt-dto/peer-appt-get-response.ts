@@ -1,6 +1,6 @@
 export interface PeerApptGetResponse {
   peer_appt_id: string;
-  topic: string;
+  conversation_topic_id: number;
   language_global_id: number;
   customer_id_requestor: string;
   peer_appt_description: string | null;
