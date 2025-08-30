@@ -5,6 +5,7 @@ import {
   Put,
   Body,
   Param,
+  Query,
   HttpException,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
@@ -15,6 +16,7 @@ import { PeerApptUpdateRequest } from '../dto/peer-appt-dto/peer-appt-update-req
 import { PeerApptCreateResponse } from '../dto/peer-appt-dto/peer-appt-create-response';
 import { PeerApptGetResponse } from '../dto/peer-appt-dto/peer-appt-get-response';
 import { PeerApptUpdateResponse } from '../dto/peer-appt-dto/peer-appt-update-response';
+import type { PeerApptSearchRequest } from '../dto/peer-appt-dto/peer-appt-search-request';
 
 @Controller()
 export class PeerApptController {
@@ -78,6 +80,28 @@ export class PeerApptController {
         error instanceof Error && error.message.includes('not found')
           ? StatusCodes.NOT_FOUND
           : StatusCodes.INTERNAL_SERVER_ERROR;
+      throw new HttpException(
+        error instanceof Error ? error.message : 'An error occurred',
+        statusCode,
+      );
+    }
+  }
+
+  @Post('peer-appt/search')
+  async searchPeerAppts(
+    @Body() searchRequest: PeerApptSearchRequest,
+  ): Promise<PeerApptGetResponse[]> {
+    try {
+      const peerAppts =
+        await this.peerApptService.searchPeerApptsByTopicAndLanguage(
+          searchRequest,
+        );
+      return peerAppts;
+    } catch (error) {
+      const statusCode =
+        error instanceof Error && error.message.includes('Failed to search')
+          ? StatusCodes.INTERNAL_SERVER_ERROR
+          : StatusCodes.BAD_REQUEST;
       throw new HttpException(
         error instanceof Error ? error.message : 'An error occurred',
         statusCode,

@@ -6,6 +6,7 @@ import type {
   PeerApptCreateResponse,
   PeerApptUpdateRequest,
   PeerApptUpdateResponse,
+  PeerApptSearchRequest,
 } from '../dto';
 
 export class PeerApptRepository {
@@ -99,5 +100,31 @@ export class PeerApptRepository {
     return rows.length
       ? { message: 'Peer appointment updated successfully' }
       : null;
+  }
+
+  async searchPeerApptsByTopicAndLanguage(
+    req: PeerApptSearchRequest,
+  ): Promise<PeerApptGetResponse[]> {
+    const query = `
+      SELECT 
+        peer_appt_id,
+        conversation_topic_id,
+        language_global_id,
+        user_account_requestor_id,
+        peer_appt_description,
+        peer_appt_minute_duration,
+        peer_appt_start_datetime,
+        peer_appt_end_datetime,
+        peer_appt_max_people,
+        peer_appt_location
+      FROM peer_appt
+      WHERE conversation_topic_id = $1 AND language_global_id = $2
+      ORDER BY peer_appt_start_datetime ASC;
+    `;
+    const { rows } = await pool.query(query, [
+      req.conversation_topic_id,
+      req.language_global_id,
+    ]);
+    return rows;
   }
 }
