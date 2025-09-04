@@ -1,4 +1,4 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import type { Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
@@ -6,6 +6,7 @@ import type { UserAccountGetResponse } from '../dto/user-account-dto/user-accoun
 
 interface RequestWithUser extends Request {
   user: UserAccountGetResponse;
+  token: string;
 }
 
 @Controller('auth')
@@ -14,7 +15,7 @@ export class AuthController {
   @UseGuards(AuthGuard('google'))
   async googleAuth() {}
 
-  @Get('google/callback')
+  @Post('google/callback')
   @UseGuards(AuthGuard('google'))
   async googleAuthCallback(@Req() req: RequestWithUser, @Res() res: Response) {
     const token = jwt.sign(
