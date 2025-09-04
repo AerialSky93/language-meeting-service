@@ -50,7 +50,6 @@ export class PassportService {
           const user = await this.userAccountRepository.getOrCreateUserAccount(
             profile.id,
             profile.displayName,
-            'google',
             profile.emails?.[0]?.value,
           );
           done(null, user);

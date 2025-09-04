@@ -59,16 +59,14 @@ export class UserAccountService {
   }
 
   async getOrCreateUserAccount(
-    socialUserId: string,
+    userSourceId: string,
     name: string,
-    registrationType: 'google' | 'facebook' | 'email',
     email?: string,
   ): Promise<UserAccountGetResponse> {
     try {
       return await this.userAccountRepository.getOrCreateUserAccount(
-        socialUserId,
+        userSourceId,
         name,
-        registrationType,
         email,
       );
     } catch (error) {

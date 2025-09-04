@@ -58,28 +58,26 @@ export class UserAccountRepository {
   }
 
   async getOrCreateUserAccount(
-    socialUserId: string,
+    userSourceId: string,
     full_name: string,
-    registrationType: 'google' | 'facebook' | 'email',
     email?: string,
   ): Promise<UserAccountGetResponse> {
     // First try to find existing user by social_user_account_id
     const findQuery = `
       SELECT user_account_id, full_name, email, time_zone
       FROM user_account
-      WHERE social_user_account_id = $1;
+      WHERE user_source_id = $1;
     `;
 
-    const { rows } = await pool.query(findQuery, [socialUserId]);
+    const { rows } = await pool.query(findQuery, [userSourceId]);
 
     if (rows.length > 0) {
-      // User exists, return it
       return rows[0];
     }
-
+    const googleUserSourceTypeId = 1;
     // User doesn't exist, create new one
     const createQuery = `
-      INSERT INTO user_account (full_name, email, social_user_account_id, registration_type, time_zone)
+      INSERT INTO user_account (full_name, email, user_source_id, user_source_type_id, time_zone)
       VALUES ($1, $2, $3, $4, $5)
       RETURNING user_account_id, full_name, email, time_zone;
     `;
@@ -87,8 +85,8 @@ export class UserAccountRepository {
     const { rows: newUser } = await pool.query(createQuery, [
       full_name,
       email || '',
-      socialUserId,
-      registrationType,
+      userSourceId,
+      googleUserSourceTypeId,
       'UTC', // default timezone
     ]);
 
