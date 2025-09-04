@@ -9,6 +9,7 @@ import { PeerApptService } from './service/peer-appt-service';
 import { PeerApptRepository } from './repository/peer-appt-repository';
 import { DiscordService } from './service/discord-service';
 import { AuthController } from './service-auth/auth-controller-google';
+import { PassportService } from './service-auth/passport';
 
 @Module({
   imports: [],
@@ -22,6 +23,7 @@ import { AuthController } from './service-auth/auth-controller-google';
     AppService,
     UserAccountService,
     UserAccountRepository,
+    PassportService,
     PeerApptService,
     PeerApptRepository,
     DiscordService,
