@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserAccountController } from './controller/user-account-controller';
@@ -12,7 +13,7 @@ import { AuthController } from './service-auth/auth-controller-google';
 import { PassportService } from './service-auth/passport';
 
 @Module({
-  imports: [],
+  imports: [ConfigModule.forRoot()],
   controllers: [
     AppController,
     UserAccountController,
