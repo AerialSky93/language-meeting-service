@@ -19,7 +19,7 @@ export class AuthController {
   async googleAuthCallback(@Req() req: RequestWithUser, @Res() res: Response) {
     const token = jwt.sign(
       { id: req.user.user_account_id },
-      process.env.JWT_SECRET,
+      process.env.JWT_SECRET!,
     );
     res.json({ user: req.user, token });
   }
