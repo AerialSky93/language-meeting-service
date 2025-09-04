@@ -5,7 +5,6 @@ import {
   Put,
   Body,
   Param,
-  Query,
   HttpException,
 } from '@nestjs/common';
 import { StatusCodes } from 'http-status-codes';
