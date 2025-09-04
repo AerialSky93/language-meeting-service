@@ -39,6 +39,7 @@ export class PassportService {
           clientID,
           clientSecret,
           callbackURL,
+          scope: ['profile', 'email'],
         },
         async (
           accessToken: string,
