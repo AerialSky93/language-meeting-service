@@ -1,29 +1,18 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Req,
-  Res,
-  UseGuards,
-  Query,
-} from '@nestjs/common';
+import { Controller, Get, Res, UseGuards, Query } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import type { Request, Response } from 'express';
+import type { Response } from 'express';
 import jwt from 'jsonwebtoken';
 import type { UserAccountGetResponse } from '../dto/user-account-dto/user-account-get-response';
 import { UserAccountRepository } from '../repository/user-account-repository';
-
-interface RequestWithUser extends Request {
-  user: UserAccountGetResponse;
-  token: string;
-}
+import { OAuth2Client } from 'google-auth-library';
 
 @Controller('auth')
 export class AuthController {
-  // Direct repository access is appropriate here since both AuthController and PassportService
-  // legitimately need the same user account operations. This avoids unnecessary abstraction
-  // layers while maintaining clear separation of concerns.
-  constructor(private readonly userAccountRepository: UserAccountRepository) {}
+  private googleOAuth2Client: OAuth2Client;
+
+  constructor(private readonly userAccountRepository: UserAccountRepository) {
+    this.googleOAuth2Client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+  }
 
   @Get('google')
   @UseGuards(AuthGuard('google'))
@@ -33,32 +22,33 @@ export class AuthController {
   async googleAuthCallback(
     @Query('tokenId') tokenId: string,
     @Query('code') code: string,
-    @Req() req: RequestWithUser,
     @Res() res: Response,
   ) {
     try {
       let user: UserAccountGetResponse;
 
       if (tokenId) {
-        console.log('Handling ID token flow');
         const decoded = jwt.decode(tokenId) as any;
-
         if (!decoded) {
           return res.status(400).json({ error: 'Invalid token' });
         }
 
-        console.log('socialUserId', decoded.sub);
-        console.log('name', decoded.name);
-        console.log('email', decoded.email);
+        const ticket = await this.googleOAuth2Client.verifyIdToken({
+          idToken: tokenId,
+          audience: process.env.GOOGLE_CLIENT_ID,
+        });
 
-        // Direct repository call for ID token flow - same pattern as passport strategy
+        const payload = ticket.getPayload();
+        if (!payload) {
+          return res.status(400).json({ error: 'Invalid token payload' });
+        }
+
         user = await this.userAccountRepository.getOrCreateUserAccount(
           decoded.sub,
           decoded.name,
           decoded.email,
         );
       } else if (code) {
-        console.log('Handling authorization code flow');
         return res
           .status(400)
           .json({ error: 'Authorization code flow not fully implemented' });
