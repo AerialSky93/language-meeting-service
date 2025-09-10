@@ -1,4 +1,4 @@
-import { Controller, Get, Res, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Res, UseGuards, Query, Req } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import type { Response } from 'express';
 import jwt from 'jsonwebtoken';
@@ -80,6 +80,53 @@ export class AuthController {
     } catch (error) {
       console.error('Auth callback error:', error);
       return res.status(500).json({ error: 'Authentication failed' });
+    }
+  }
+
+  @Get('google/status')
+  async getGoogleAuthStatus(
+    @Req() req: any,
+    @Res() res: Response,
+  ): Promise<Response<AuthGetResponse | { message: string }>> {
+    try {
+      const token = req.cookies.token;
+
+      if (!token) {
+        return res.status(401).json({ message: 'Not authenticated' });
+      }
+
+      const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any;
+
+      if (!decoded || !decoded.id) {
+        return res.status(401).json({ message: 'Invalid token' });
+      }
+
+      const userAccount = await this.userAccountRepository.getUserAccountById({
+        userId: decoded.id,
+      });
+
+      if (!userAccount) {
+        return res.status(401).json({ message: 'User not found' });
+      }
+
+      const authResponse: AuthGetResponse = {
+        user_account_id: userAccount.user_account_id,
+        full_name: userAccount.full_name,
+        email: userAccount.email,
+      };
+
+      return res.json(authResponse);
+    } catch (error) {
+      console.error('Auth status check error:', error);
+      if (error instanceof jwt.JsonWebTokenError) {
+        return res.status(401).json({ message: 'Invalid token' });
+      }
+
+      if (error instanceof jwt.TokenExpiredError) {
+        return res.status(401).json({ message: 'Token expired' });
+      }
+
+      return res.status(500).json({ message: 'Internal server error' });
     }
   }
 }
