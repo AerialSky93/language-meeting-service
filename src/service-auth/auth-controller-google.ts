@@ -63,7 +63,6 @@ export class AuthController {
         process.env.JWT_SECRET!,
       );
 
-      // Set HttpOnly cookie instead of returning token
       res.cookie('token', token, {
         httpOnly: true,
         secure: true,
