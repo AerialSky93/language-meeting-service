@@ -11,3 +11,4 @@ export * from './peer-appt-dto/peer-appt-get-response';
 export * from './peer-appt-dto/peer-appt-update-request';
 export * from './peer-appt-dto/peer-appt-update-response';
 export * from './peer-appt-dto/peer-appt-search-request';
+export * from './auth-dto/auth-get-response';

@@ -3,6 +3,7 @@ import { AuthGuard } from '@nestjs/passport';
 import type { Response } from 'express';
 import jwt from 'jsonwebtoken';
 import type { UserAccountGetResponse } from '../dto/user-account-dto/user-account-get-response';
+import type { AuthGetResponse } from '../dto/auth-dto/auth-get-response';
 import { UserAccountRepository } from '../repository/user-account-repository';
 import { OAuth2Client } from 'google-auth-library';
 
@@ -23,7 +24,7 @@ export class AuthController {
     @Query('tokenId') tokenId: string,
     @Query('code') code: string,
     @Res() res: Response,
-  ) {
+  ): Promise<Response<AuthGetResponse>> {
     try {
       let user: UserAccountGetResponse;
 
@@ -61,10 +62,17 @@ export class AuthController {
         process.env.JWT_SECRET!,
       );
 
-      res.json({ user, token });
+      const authResponse: AuthGetResponse = {
+        user_account_id: user.user_account_id,
+        full_name: user.full_name,
+        email: user.email,
+        token: token,
+      };
+
+      return res.json(authResponse);
     } catch (error) {
       console.error('Auth callback error:', error);
-      res.status(500).json({ error: 'Authentication failed' });
+      return res.status(500).json({ error: 'Authentication failed' });
     }
   }
 }
