@@ -6,6 +6,7 @@ import type { UserAccountGetResponse } from '../dto/user-account-dto/user-accoun
 import type { AuthGetResponse } from './auth-dto/auth-get-response';
 import { UserAccountRepository } from '../repository/user-account-repository';
 import { OAuth2Client } from 'google-auth-library';
+import { getCookieSameSite } from './auth-util';
 
 @Controller('auth')
 export class AuthController {
@@ -65,8 +66,8 @@ export class AuthController {
 
       res.cookie('token', token, {
         httpOnly: true,
-        secure: true,
-        sameSite: 'strict',
+        secure: false, // TO DO MAKE THIS SECURE WITH CERTIFICATES
+        sameSite: getCookieSameSite(),
         maxAge: this.tokenExpirationMs,
       });
 
