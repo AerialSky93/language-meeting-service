@@ -1,4 +1,12 @@
-import { Controller, Get, Res, UseGuards, Query, Req } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Res,
+  UseGuards,
+  Query,
+  Req,
+} from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import type { Response } from 'express';
 import jwt from 'jsonwebtoken';
@@ -91,7 +99,6 @@ export class AuthController {
   ): Promise<Response<AuthGetResponse | { message: string }>> {
     try {
       const token = req.cookies.token;
-
       if (!token) {
         return res.status(401).json({ message: 'Not authenticated' });
       }
@@ -128,6 +135,22 @@ export class AuthController {
       }
 
       return res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+
+  @Post('logout')
+  async logout(@Res() res: Response): Promise<Response<{ success: boolean }>> {
+    try {
+      res.clearCookie('token', {
+        httpOnly: true,
+        secure: false,
+        sameSite: getCookieSameSite(),
+      });
+
+      return res.json({ success: true });
+    } catch (error) {
+      console.error('Logout error:', error);
+      return res.status(500).json({ success: false });
     }
   }
 }
