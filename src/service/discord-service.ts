@@ -8,6 +8,7 @@ import {
 } from 'discord.js';
 import { discordConfig } from '../config/discord.config';
 import { DISCORD_CHANNELS } from '../const/discord-channel-names';
+import { DiscordChannelCreateResponse } from 'src/dto/discord-dto/discord-channel-create-response';
 
 @Injectable()
 export class DiscordService implements OnModuleInit {
@@ -31,7 +32,9 @@ export class DiscordService implements OnModuleInit {
     await this.client.login(discordConfig.clientToken);
   }
 
-  private async createChannel(channelName: string): Promise<void> {
+  public async createChannel(
+    channelName: string,
+  ): Promise<DiscordChannelCreateResponse> {
     const existingChannel = this.guild.channels.cache.find(
       (channel) => channel.name === channelName,
     ) as VoiceChannel | undefined;
@@ -40,7 +43,11 @@ export class DiscordService implements OnModuleInit {
       this.logger.log(
         `Channel '${channelName}' already exists with ID: ${existingChannel.id}`,
       );
-      return;
+      const discordChannelCreateResponse: DiscordChannelCreateResponse = {
+        discord_channel_id: existingChannel.id,
+        discord_channel_name: existingChannel.name,
+      };
+      return discordChannelCreateResponse;
     }
     try {
       const channel: VoiceChannel = (await this.guild.channels.create({
@@ -49,9 +56,19 @@ export class DiscordService implements OnModuleInit {
         reason: `Creating voice channel for ${channelName}`,
       })) as VoiceChannel;
 
+      const discordChannelCreateResponse: DiscordChannelCreateResponse = {
+        discord_channel_id: channel.id,
+        discord_channel_name: channel.name,
+      };
       this.logger.log(`Created channel ${channel.name} with ID: ${channel.id}`);
+      return discordChannelCreateResponse;
     } catch (error) {
       this.logger.error(`Error creating channel '${channelName}':`, error);
+      throw new Error(
+        `Failed to create channel '${channelName}': ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+      );
     }
   }
 

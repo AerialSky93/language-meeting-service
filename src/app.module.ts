@@ -9,6 +9,7 @@ import { PeerApptController } from './controller/peer-appt-controller';
 import { PeerApptService } from './service/peer-appt-service';
 import { PeerApptRepository } from './repository/peer-appt-repository';
 import { DiscordService } from './service/discord-service';
+import { DiscordController } from './controller/discord-controller';
 import { AuthController } from './service-auth/auth-controller-google';
 import { PassportService } from './service-auth/passport';
 
@@ -18,6 +19,7 @@ import { PassportService } from './service-auth/passport';
     AppController,
     UserAccountController,
     PeerApptController,
+    DiscordController,
     AuthController,
   ],
   providers: [
