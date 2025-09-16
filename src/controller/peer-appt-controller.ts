@@ -41,6 +41,26 @@ export class PeerApptController {
     }
   }
 
+  @Post('peer-appt-now')
+  async createPeerApptNow(
+    @Body() createPeerApptDto: PeerApptCreateRequest,
+  ): Promise<PeerApptCreateResponse> {
+    try {
+      const result =
+        await this.peerApptService.createPeerApptNow(createPeerApptDto);
+      return result;
+    } catch (error) {
+      const statusCode =
+        error instanceof Error && error.message.includes('Missing')
+          ? StatusCodes.BAD_REQUEST
+          : StatusCodes.INTERNAL_SERVER_ERROR;
+      throw new HttpException(
+        error instanceof Error ? error.message : 'An error occurred',
+        statusCode,
+      );
+    }
+  }
+
   @Get('peer-appt/:id')
   async getPeerApptById(@Param('id') id: string): Promise<PeerApptGetResponse> {
     try {

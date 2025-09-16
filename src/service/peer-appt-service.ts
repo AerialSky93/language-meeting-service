@@ -12,21 +12,35 @@ import { Injectable } from '@nestjs/common';
 export class PeerApptService {
   constructor(private readonly peerApptRepository: PeerApptRepository) {}
 
-  async createPeerAppt(
+  public async createPeerAppt(
     peerApptData: PeerApptCreateRequest,
   ): Promise<PeerApptCreateResponse> {
     try {
       return await this.peerApptRepository.createPeerAppt(peerApptData);
     } catch (error) {
       throw new Error(
-        `Failed to create peer appointment: ${
+        `Failed to create peer appointment scheduled: ${
           error instanceof Error ? error.message : 'Unknown error'
         }`,
       );
     }
   }
 
-  async getPeerApptById(
+  public async createPeerApptNow(
+    peerApptData: PeerApptCreateRequest,
+  ): Promise<PeerApptCreateResponse> {
+    try {
+      return await this.peerApptRepository.createPeerAppt(peerApptData);
+    } catch (error) {
+      throw new Error(
+        `Failed to create peer appointment now: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+      );
+    }
+  }
+
+  public async getPeerApptById(
     request: PeerApptGetRequest,
   ): Promise<PeerApptGetResponse> {
     const peerAppt = await this.peerApptRepository.getPeerApptById(request);
@@ -37,7 +51,7 @@ export class PeerApptService {
     return peerAppt;
   }
 
-  async updatePeerAppt(
+  public async updatePeerAppt(
     request: PeerApptUpdateRequest,
   ): Promise<PeerApptUpdateResponse> {
     const peerAppt = await this.peerApptRepository.updatePeerAppt(request);
@@ -48,7 +62,7 @@ export class PeerApptService {
     return peerAppt;
   }
 
-  async searchPeerApptsByTopicAndLanguage(
+  public async searchPeerApptsByTopicAndLanguage(
     request: PeerApptSearchRequest,
   ): Promise<PeerApptGetResponse[]> {
     try {
