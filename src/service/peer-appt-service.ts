@@ -1,4 +1,5 @@
 import { PeerApptRepository } from '../repository/peer-appt-repository';
+import { DiscordService } from './discord-service';
 import type { PeerApptGetRequest } from '../dto/peer-appt-dto/peer-appt-get-request';
 import type { PeerApptGetResponse } from '../dto/peer-appt-dto/peer-appt-get-response';
 import type { PeerApptCreateRequest } from '../dto/peer-appt-dto/peer-appt-create-request';
@@ -10,7 +11,10 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class PeerApptService {
-  constructor(private readonly peerApptRepository: PeerApptRepository) {}
+  constructor(
+    private readonly peerApptRepository: PeerApptRepository,
+    private readonly discordService: DiscordService,
+  ) {}
 
   public async createPeerAppt(
     peerApptData: PeerApptCreateRequest,
@@ -30,7 +34,22 @@ export class PeerApptService {
     peerApptData: PeerApptCreateRequest,
   ): Promise<PeerApptCreateResponse> {
     try {
-      return await this.peerApptRepository.createPeerAppt(peerApptData);
+      const peerAppt =
+        await this.peerApptRepository.createPeerAppt(peerApptData);
+
+      try {
+        const discordChannelName = `meetingAAA-${peerAppt.peer_appt_id}`;
+        await this.discordService.createChannel(discordChannelName);
+      } catch (discordError) {
+        throw new Error(
+          `Failed to create Discord channel for appointment ${peerAppt.peer_appt_id}: ${
+            discordError instanceof Error
+              ? discordError.message
+              : 'Unknown error'
+          }`,
+        );
+      }
+      return peerAppt;
     } catch (error) {
       throw new Error(
         `Failed to create peer appointment now: ${
