@@ -9,6 +9,7 @@ import {
 import { discordConfig } from '../config/discord.config';
 import { DISCORD_CHANNELS } from '../const/discord-channel-names';
 import { DiscordChannelCreateResponse } from 'src/dto/discord-dto/discord-channel-create-response';
+import { DiscordCategoryCreateResponse } from 'src/dto/discord-dto/discord-category-create-response';
 
 @Injectable()
 export class DiscordService implements OnModuleInit {
@@ -38,7 +39,6 @@ export class DiscordService implements OnModuleInit {
     const existingChannel = this.guild.channels.cache.find(
       (channel) => channel.name === channelName,
     ) as VoiceChannel | undefined;
-
     if (existingChannel) {
       this.logger.log(
         `Channel '${channelName}' already exists with ID: ${existingChannel.id}`,
@@ -167,5 +167,31 @@ export class DiscordService implements OnModuleInit {
     );
     await Promise.all(deleteChannelPromises);
     this.logger.log('Finished deleting Discord channels.');
+  }
+
+  public async createCategory(
+    categoryName: string,
+  ): Promise<DiscordCategoryCreateResponse> {
+    try {
+      const category = await this.guild.channels.create({
+        name: categoryName,
+        type: ChannelType.GuildCategory,
+      });
+      const discordCategoryCreateResponse: DiscordCategoryCreateResponse = {
+        discord_category_id: category.id,
+        discord_category_name: category.name,
+      };
+      this.logger.log(
+        `Created category ${categoryName} with ID: ${category.id}`,
+      );
+      return discordCategoryCreateResponse;
+    } catch (error) {
+      this.logger.error(`Error creating category '${categoryName}':`, error);
+      throw new Error(
+        `Failed to create category '${categoryName}': ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+      );
+    }
   }
 }
